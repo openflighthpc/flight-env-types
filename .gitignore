@@ -1,0 +1,5 @@
+*~
+tmp
+.bundle
+vendor
+etc/config.yml
