@@ -27,9 +27,9 @@
 # ==============================================================================
 set -e
 
-flight_ENV_ROOT=${flight_ENV_ROOT:-/opt/flight/var/lib/env}
-flight_ENV_CACHE=${flight_ENV_CACHE:-/opt/flight/var/cache/env}
-flight_ENV_BUILD_CACHE=${flight_ENV_BUILD_CACHE:-/opt/flight/var/cache/env/build}
+flight_ENV_ROOT=${flight_ENV_ROOT:-${flight_ROOT}/var/lib/env}
+flight_ENV_CACHE=${flight_ENV_CACHE:-${flight_ROOT}/var/cache/env}
+flight_ENV_BUILD_CACHE=${flight_ENV_BUILD_CACHE:-${flight_ROOT}/var/cache/env/build}
 name=$1
 
 if [ -z "$name" ]; then
@@ -91,8 +91,8 @@ if [ ! -d "${flight_ENV_ROOT}/share/gridware/1.5.4" ]; then
   cp -R gridware-legacy-stable/* "${flight_ENV_ROOT}/share/gridware/1.5.4"
   cd ${flight_ENV_ROOT}/share/gridware/1.5.4
   export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
-  if [ -x /opt/flight/bin/flexec ]; then
-    /opt/flight/bin/flexec bundle install --path=vendor --without=development --without=test --local
+  if [ -x ${flight_ROOT}/bin/flexec ]; then
+    ${flight_ROOT}/bin/flexec bundle install --path=vendor --without=development --without=test --local
   else
     bundle install --path=vendor --without=development --without=test --local
   fi
