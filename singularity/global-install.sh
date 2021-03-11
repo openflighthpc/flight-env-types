@@ -68,12 +68,12 @@ fi
 if [ ! -f singularity-3.2.1.tar.gz ]; then
   env_stage "Fetching prerequisite (singularity)"
   wget https://github.com/sylabs/singularity/archive/v3.2.1.tar.gz -O singularity-3.2.1.tar.gz
-  export GOPATH=${flight_ENV_CACHE}/build/go
+  export GOPATH=${flight_ENV_BUILD_CACHE}/go
   export PATH=${GOPATH}/bin:$PATH
   mkdir -p $GOPATH/src/github.com/sylabs
   cd $GOPATH/src/github.com/sylabs
   env_stage "Extracting prerequisite (singularity)"
-  tar xzf ${flight_ENV_CACHE}/build/singularity-3.2.1.tar.gz
+  tar xzf ${flight_ENV_BUILD_CACHE}/singularity-3.2.1.tar.gz
   mv singularity-3.2.1 singularity
   cd singularity
   echo '3.2.1' >> VERSION
