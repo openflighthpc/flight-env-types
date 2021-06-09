@@ -27,6 +27,8 @@
 # ==============================================================================
 set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 flight_ENV_ROOT=${flight_ENV_ROOT:-$HOME/.local/share/flight/env}
 flight_ENV_CACHE=${flight_ENV_CACHE:-$HOME/.cache/flight/env}
 flight_ENV_BUILD_CACHE=${flight_ENV_BUILD_CACHE:-$HOME/.cache/flight/env/build}
@@ -113,18 +115,9 @@ fi
 # Activate `module` command
 . ${flight_ENV_ROOT}/share/lmod/8.1/lmod/8.1/init/profile
 
-# Install EasyBuild
-if [ ! -f bootstrap_eb.py ]; then
-  env_stage "Fetching prerequisite (easybuild)"
-  wget https://raw.githubusercontent.com/easybuilders/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py
-fi
-
 env_stage "Bootstrapping EasyBuild environment (easybuild@${name})"
 
-if ! which python &>/dev/null; then
-  PYTHON=python3
-else
-  PYTHON=python
-fi
+/bin/bash "${SCRIPT_DIR}/stage-2-install.sh" "${name}"
 
-$PYTHON bootstrap_eb.py ${flight_ENV_ROOT}/easybuild+${name}
+# Remove the temporary EasyBuild installation.
+rm -rf "$EB_TMPDIR"
