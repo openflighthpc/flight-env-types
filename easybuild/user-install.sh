@@ -27,6 +27,8 @@
 # ==============================================================================
 set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 flight_ENV_ROOT=${flight_ENV_ROOT:-$HOME/.local/share/flight/env}
 flight_ENV_CACHE=${flight_ENV_CACHE:-$HOME/.cache/flight/env}
 flight_ENV_BUILD_CACHE=${flight_ENV_BUILD_CACHE:-$HOME/.cache/flight/env/build}
@@ -37,11 +39,11 @@ if [ -z "$name" ]; then
   exit 1
 fi
 
-# create directory structure
+# Create directory structure
 mkdir -p ${flight_ENV_CACHE} ${flight_ENV_BUILD_CACHE} ${flight_ENV_ROOT}
 cd ${flight_ENV_BUILD_CACHE}
 
-# Stop any existing activatged EasyBuild environment from getting in
+# Stop any existing activated EasyBuild environment from getting in
 # the way.
 MODULEPATH=""
 
@@ -49,15 +51,19 @@ if [ -f /etc/redhat-release ] && grep -q 'release 8' /etc/redhat-release; then
   distro=rhel8
 fi
 
-# build LUA
 env_stage "Verifying prerequisites"
+
 if [ "$distro" != "rhel8" ]; then
-  # build LUA
+  # Build LUA
   if [ ! -f lua-5.1.4.9.tar.bz2 ]; then
     env_stage "Fetching prerequisite (lua)"
     wget https://sourceforge.net/projects/lmod/files/lua-5.1.4.9.tar.bz2
+  fi
+  if [ ! -d lua-5.1.4.9 ]; then
     env_stage "Extracting prerequisite (lua)"
     tar xjf lua-5.1.4.9.tar.bz2
+  fi
+  if [ ! -d ${flight_ENV_ROOT}/share/lua/5.1.4.9 ]; then
     cd lua-5.1.4.9
     env_stage "Building prerequisite (lua)"
     ./configure --with-static=yes --prefix=${flight_ENV_ROOT}/share/lua/5.1.4.9
@@ -69,7 +75,7 @@ if [ "$distro" != "rhel8" ]; then
   PATH=${flight_ENV_ROOT}/share/lua/5.1.4.9/bin:$PATH
 fi
 
-# build Tcl
+# Build Tcl
 if [ ! -d ${flight_ENV_ROOT}/share/tcl/8.6.9 ]; then
   if [ ! -f tcl8.6.9-src.tar.gz ]; then
     env_stage "Fetching prerequisite (tcl)"
@@ -88,11 +94,16 @@ if [ ! -d ${flight_ENV_ROOT}/share/tcl/8.6.9 ]; then
 fi
 PATH=${flight_ENV_ROOT}/share/tcl/8.6.9/bin:$PATH
 
+# Build lmod.
 if [ ! -f Lmod-8.1.tar.bz2 ]; then
   env_stage "Fetching prerequisite (lmod)"
   wget https://sourceforge.net/projects/lmod/files/Lmod-8.1.tar.bz2
+fi
+if [ ! -d Lmod-8.1 ]; then
   env_stage "Extracting prerequisite (lmod)"
   tar xjf Lmod-8.1.tar.bz2
+fi
+if [ ! -f ${flight_ENV_ROOT}/share/lmod/8.1/lmod/8.1/init/profile ]; then
   cd Lmod-8.1
   env_stage "Configuring prerequisite (lmod)"
   ./configure --prefix=${flight_ENV_ROOT}/share/lmod/8.1 --with-fastTCLInterp=no
@@ -101,21 +112,12 @@ if [ ! -f Lmod-8.1.tar.bz2 ]; then
   cd ..
 fi
 
-# activate `module` command
+# Activate `module` command
 . ${flight_ENV_ROOT}/share/lmod/8.1/lmod/8.1/init/profile
-
-# Install EasyBuild
-if [ ! -f bootstrap_eb.py ]; then
-  env_stage "Fetching prerequisite (easybuild)"
-  wget https://raw.githubusercontent.com/easybuilders/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py
-fi
 
 env_stage "Bootstrapping EasyBuild environment (easybuild@${name})"
 
-if ! which python &>/dev/null; then
-  PYTHON=python3
-else
-  PYTHON=python
-fi
+/bin/bash "${SCRIPT_DIR}/stage-2-install.sh" "${name}"
 
-$PYTHON bootstrap_eb.py ${flight_ENV_ROOT}/easybuild+${name}
+# Remove the temporary EasyBuild installation.
+rm -rf "$EB_TMPDIR"
