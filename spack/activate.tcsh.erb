@@ -29,7 +29,6 @@ set flight_ENV_orig_prompt = "$prompt"
 
 setenv SPACK_ROOT <%= env_root %>/spack+<%= env_name %>
 source <%= env_root %>/spack+<%= env_name %>/share/spack/setup-env.csh
-eval `spack --print-shell-vars csh,modules`
 source ${_sp_module_prefix}/Modules/init/tcsh
 
 setenv flight_ENV_active spack@<%= env_name %>
