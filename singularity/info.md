@@ -20,11 +20,11 @@ host) to simply run a command inside of a container image as
 themselves.
 
 For more details, please refer to the comprehensive Singularity
-documentation at <https://www.sylabs.io/guides/3.2/user-guide/>.
+documentation at <https://www.sylabs.io/guides/3.10/user-guide/>.
 
 ## ENVIRONMENT CREATION
 
-This environment provides Singularity v3.2.1. It is possible to create
+This environment provides Singularity v3.10.0. It is possible to create
 either user-level Singularity environments or, if you have write
 access to the global environment tree, to create system-wide
 Singularity environments.
@@ -86,7 +86,7 @@ To see what images are cached within your environment use the
 ...`.
 
 Refer to the [Singularity user
-guide](https://sylabs.io/guides/3.2/user-guide/) for more details.
+guide](https://sylabs.io/guides/3.10/user-guide/) for more details.
 
 ### Global Environment
 
@@ -132,7 +132,7 @@ To see what images are cached within your environment use the
 ...`.
 
 Refer to the [Singularity user
-guide](https://sylabs.io/guides/3.2/user-guide/) for more details.
+guide](https://sylabs.io/guides/3.10/user-guide/) for more details.
 
 ## LICENSE
 
@@ -144,4 +144,4 @@ information.
 
 ## COPYRIGHT
 
-Copyright (C) 2019-Present Alces Flight Ltd.
+Copyright (C) 2022-Present Alces Flight Ltd.

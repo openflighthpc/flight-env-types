@@ -1,5 +1,5 @@
 # =============================================================================
-# Copyright (C) 2019-present Alces Flight Ltd.
+# Copyright (C) 2022-present Alces Flight Ltd.
 #
 # This file is part of Flight Environment.
 #
@@ -27,7 +27,6 @@
 set flight_ENV_orig_PATH = "$PATH"
 set flight_ENV_orig_prompt = "$prompt"
 
-setenv PATH <%= env_root %>/share/singularity/3.2.1/bin:<%= env_root %>/share/squashfs/4.4/bin:$PATH
 setenv SINGULARITY_CACHEDIR <%= env_root %>/singularity+<%= env_name %>/cache
 setenv SINGULARITY_PULLDIR <%= env_root %>/singularity+<%= env_name %>/images
 setenv SINGULARITY_LOCALCACHEDIR /tmp
@@ -38,6 +37,15 @@ setenv flight_ENV_active singularity@<%= env_name %>
 setenv flight_ENV_scope <%= env_global ? 'global' : 'user' %>
 setenv flight_ENV_dir <%= env_root %>/singularity+<%= env_name %>
 
+if ( -f <%= env_root %>/singularity+<%= env_name %>/singularity.tcsh.rc ) then
+  source <%= env_root %>/singularity+<%= env_name %>/singularity.tcsh.rc
+endif
+if ( ! ?flight_ENV_singularity_version ) then
+  setenv flight_ENV_singularity_version=3.2.1
+endif
+
+setenv PATH <%= env_root %>/share/singularity/${flight_ENV_singularity_version}/bin:<%= env_root %>/share/squashfs/4.4/bin:$PATH
+
 set bold='%{\033[1m%}'
 set reverse='%{\033[7m%}'
 set reset='%{\033[0;1m%}'
@@ -45,7 +53,7 @@ set clr='%{\033[0m%}'
 set prompt="$bold<singularity<%= env_name == 'default' ? '' : "@#{env_name}" %><%= env_global ? '$reverse{+}$reset' : '' %>>$clr $prompt"
 unset bold reverse reset clr
 
-if ( ! -u "<%= env_root %>/share/singularity/3.2.1/libexec/singularity/bin/starter-suid" ) then
+if ( ! -u "<%= env_root %>/share/singularity/${flight_ENV_singularity_version}/libexec/singularity/bin/starter-suid" ) then
   set mun=`sysctl -n user.max_user_namespaces`
   if ( $mun == 0 ) then
     set red=`tput setaf 1`
