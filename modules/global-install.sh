@@ -41,36 +41,40 @@ fi
 mkdir -p ${flight_ENV_CACHE} ${flight_ENV_BUILD_CACHE} ${flight_ENV_ROOT}
 cd ${flight_ENV_BUILD_CACHE}
 
+tcl_v=8.6.9
+tcl_mv=8.6
+v=4.3.0
+
 env_stage "Verifying prerequisites"
-if [ ! -d "${flight_ENV_ROOT}"/share/modules/4.3.0 ]; then
-  if [ ! -d ${flight_ENV_ROOT}/share/tcl/8.6.9 ]; then
-    if [ ! -f tcl8.6.9-src.tar.gz ]; then
+if [ ! -d "${flight_ENV_ROOT}"/share/modules/${v} ]; then
+  if [ ! -d ${flight_ENV_ROOT}/share/tcl/${tcl_v} ]; then
+    if [ ! -f tcl${tcl_v}-src.tar.gz ]; then
       env_stage "Fetching prerequisite (tcl)"
-      wget https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
+      wget https://prdownloads.sourceforge.net/tcl/tcl${tcl_v}-src.tar.gz
     fi
     env_stage "Extracting prerequisite (tcl)"
-    tar xzf tcl8.6.9-src.tar.gz
+    tar xzf tcl${tcl_v}-src.tar.gz
     env_stage "Building prerequisite (tcl)"
-    cd tcl8.6.9/unix
-    ./configure --prefix=${flight_ENV_ROOT}/share/tcl/8.6.9
+    cd tcl${tcl_v}/unix
+    ./configure --prefix=${flight_ENV_ROOT}/share/tcl/${tcl_v}
     make
     env_stage "Installing prerequisite (tcl)"
     make install
-    ln -s ${flight_ENV_ROOT}/share/tcl/8.6.9/bin/tclsh8.6 ${flight_ENV_ROOT}/share/tcl/8.6.9/bin/tclsh
+    ln -s ${flight_ENV_ROOT}/share/tcl/${tcl_v}/bin/tclsh${tcl_mv} ${flight_ENV_ROOT}/share/tcl/${tcl_v}/bin/tclsh
     cd ../..
   fi
-  tcl_params="--with-tcl=${flight_ENV_ROOT}/share/tcl/8.6.9/lib --with-tclsh=${flight_ENV_ROOT}/share/tcl/8.6.9/bin/tclsh --with-tcl-ver=8.6 --without-tclx"
-  if [ ! -f modules-4.3.0.tar.gz ]; then
+  tcl_params="--with-tcl=${flight_ENV_ROOT}/share/tcl/${tcl_v}/lib --with-tclsh=${flight_ENV_ROOT}/share/tcl/${tcl_v}/bin/tclsh --with-tcl-ver=${tcl_mv} --without-tclx"
+  if [ ! -f modules-${v}.tar.gz ]; then
     env_stage "Fetching prerequisite (modules)"
-    wget https://sourceforge.net/projects/modules/files/Modules/modules-4.3.0/modules-4.3.0.tar.gz
+    wget https://sourceforge.net/projects/modules/files/Modules/modules-${v}/modules-${v}.tar.gz
   fi
   env_stage "Extracting prerequisite (modules)"
-  tar xzf modules-4.3.0.tar.gz
+  tar xzf modules-${v}.tar.gz
   env_stage "Building prerequisite (modules)"
-  cd modules-4.3.0
+  cd modules-${v}
   ./configure \
           --disable-versioning \
-          --prefix=${flight_ENV_ROOT}/share/modules/4.3.0 $tcl_params
+          --prefix=${flight_ENV_ROOT}/share/modules/${v} $tcl_params
   make
   env_stage "Installing prerequisite (modules)"
   make install
@@ -79,7 +83,7 @@ fi
 env_stage "Creating environment (modules@${name})"
 
 mkdir -p ${flight_ENV_ROOT}/modules+${name}/modulefiles
-cp ${flight_ENV_ROOT}/share/modules/4.3.0/modulefiles/null ${flight_ENV_ROOT}/modules+${name}/modulefiles
+cp ${flight_ENV_ROOT}/share/modules/${v}/modulefiles/null ${flight_ENV_ROOT}/modules+${name}/modulefiles
 cat <<EOF > ${flight_ENV_ROOT}/modules+${name}/modules.bash.rc
 module use ${flight_ENV_ROOT}/modules+${name}/modulefiles
 EOF
