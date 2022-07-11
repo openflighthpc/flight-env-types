@@ -81,7 +81,7 @@ if [ ! -f singularity-${v}.tar.gz ]; then
   tar xzf ${flight_ENV_BUILD_CACHE}/singularity-${v}.tar.gz
   mv singularity-${v} singularity
   cd singularity
-  echo '${v}' >> VERSION
+  echo "${v}" >> VERSION
   env_stage "Building prerequisite (singularity)"
   if [ "$UID" == "0" ]; then
     ./mconfig --prefix=${flight_ENV_ROOT}/share/singularity/${v} \
