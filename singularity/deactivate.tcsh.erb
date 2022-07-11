@@ -24,7 +24,7 @@
 # For more information on Flight Environment, please visit:
 # https://github.com/openflighthpc/flight-env
 # ==============================================================================
-foreach evar (SINGULARITY_CACHEDIR SINGULARITY_PULLDIR SINGULARITY_LOCALCACHEDIR)
+foreach evar (SINGULARITY_CACHEDIR SINGULARITY_PULLDIR SINGULARITY_LOCALCACHEDIR flight_ENV_singularity_version)
   unsetenv $evar
 end
 unset evar
