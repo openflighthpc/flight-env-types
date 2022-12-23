@@ -41,15 +41,17 @@ fi
 mkdir -p ${flight_ENV_CACHE} ${flight_ENV_BUILD_CACHE} ${flight_ENV_ROOT}
 cd ${flight_ENV_BUILD_CACHE}
 
+v=0.19.0
+
 env_stage "Verifying prerequisites"
-if [ ! -f spack-v0.19.0.tar.gz ]; then
+if [ ! -f spack-v${v}.tar.gz ]; then
   env_stage "Fetching prerequisite (spack)"
-  wget https://github.com/spack/spack/archive/v0.19.0.tar.gz -O spack-v0.19.0.tar.gz
+  wget https://github.com/spack/spack/archive/v${v}.tar.gz -O spack-v${v}.tar.gz
 fi
 
 mkdir -p ${flight_ENV_ROOT}/spack+${name}
 env_stage "Extracting Spack hierarchy (spack@${name})"
-tar -C ${flight_ENV_ROOT}/spack+${name} -xzf spack-v0.19.0.tar.gz --strip-components=1
+tar -C ${flight_ENV_ROOT}/spack+${name} -xzf spack-v${v}.tar.gz --strip-components=1
 cd ${flight_ENV_ROOT}/spack+${name}
 env_stage "Bootstrapping Spack environment (spack@${name})"
 if ! which python &>/dev/null; then

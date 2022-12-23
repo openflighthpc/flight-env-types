@@ -43,6 +43,11 @@ fi
 mkdir -p ${flight_ENV_CACHE} ${flight_ENV_BUILD_CACHE} ${flight_ENV_ROOT}
 cd ${flight_ENV_BUILD_CACHE}
 
+lua_v=5.1.4.9
+tcl_v=8.6.9
+tcl_mv=8.6
+lmod_v=8.1
+
 # Stop any existing activated EasyBuild environment from getting in
 # the way.
 MODULEPATH=""
@@ -55,65 +60,65 @@ env_stage "Verifying prerequisites"
 
 if [ "$distro" != "rhel8" ]; then
   # Build LUA
-  if [ ! -f lua-5.1.4.9.tar.bz2 ]; then
+  if [ ! -f lua-${lua_v}.tar.bz2 ]; then
     env_stage "Fetching prerequisite (lua)"
-    wget https://sourceforge.net/projects/lmod/files/lua-5.1.4.9.tar.bz2
+    wget https://sourceforge.net/projects/lmod/files/lua-${lua_v}.tar.bz2
   fi
-  if [ ! -d lua-5.1.4.9 ]; then
+  if [ ! -d lua-${lua_v} ]; then
     env_stage "Extracting prerequisite (lua)"
-    tar xjf lua-5.1.4.9.tar.bz2
+    tar xjf lua-${lua_v}.tar.bz2
   fi
-  if [ ! -d ${flight_ENV_ROOT}/share/lua/5.1.4.9 ]; then
-    cd lua-5.1.4.9
+  if [ ! -d ${flight_ENV_ROOT}/share/lua/${lua_v} ]; then
+    cd lua-${lua_v}
     env_stage "Building prerequisite (lua)"
-    ./configure --with-static=yes --prefix=${flight_ENV_ROOT}/share/lua/5.1.4.9
+    ./configure --with-static=yes --prefix=${flight_ENV_ROOT}/share/lua/${lua_v}
     make
     env_stage "Installing prerequisite (lua)"
     make install
     cd ..
   fi
-  PATH=${flight_ENV_ROOT}/share/lua/5.1.4.9/bin:$PATH
+  PATH=${flight_ENV_ROOT}/share/lua/${lua_v}/bin:$PATH
 fi
 
 # Build Tcl
-if [ ! -d ${flight_ENV_ROOT}/share/tcl/8.6.9 ]; then
-  if [ ! -f tcl8.6.9-src.tar.gz ]; then
+if [ ! -d ${flight_ENV_ROOT}/share/tcl/${tcl_v} ]; then
+  if [ ! -f tcl${tcl_v}-src.tar.gz ]; then
     env_stage "Fetching prerequisite (tcl)"
-    wget https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
+    wget https://prdownloads.sourceforge.net/tcl/tcl${tcl_v}-src.tar.gz
   fi
   env_stage "Extracting prerequisite (tcl)"
-  tar xzf tcl8.6.9-src.tar.gz
-  cd tcl8.6.9/unix
+  tar xzf tcl${tcl_v}-src.tar.gz
+  cd tcl${tcl_v}/unix
   env_stage "Building prerequisite (tcl)"
-  ./configure --prefix=${flight_ENV_ROOT}/share/tcl/8.6.9
+  ./configure --prefix=${flight_ENV_ROOT}/share/tcl/${tcl_v}
   make
   env_stage "Installing prerequisite (tcl)"
   make install
-  ln -s ${flight_ENV_ROOT}/share/tcl/8.6.9/bin/tclsh8.6 ${flight_ENV_ROOT}/share/tcl/8.6.9/bin/tclsh
+  ln -s ${flight_ENV_ROOT}/share/tcl/${tcl_v}/bin/tclsh${tcl_mv} ${flight_ENV_ROOT}/share/tcl/${tcl_v}/bin/tclsh
   cd ../..
 fi
-PATH=${flight_ENV_ROOT}/share/tcl/8.6.9/bin:$PATH
+PATH=${flight_ENV_ROOT}/share/tcl/${tcl_v}/bin:$PATH
 
 # Build lmod.
-if [ ! -f Lmod-8.1.tar.bz2 ]; then
+if [ ! -f Lmod-${lmod_v}.tar.bz2 ]; then
   env_stage "Fetching prerequisite (lmod)"
-  wget https://sourceforge.net/projects/lmod/files/Lmod-8.1.tar.bz2
+  wget https://sourceforge.net/projects/lmod/files/Lmod-${lmod_v}.tar.bz2
 fi
-if [ ! -d Lmod-8.1 ]; then
+if [ ! -d Lmod-${lmod_v} ]; then
   env_stage "Extracting prerequisite (lmod)"
-  tar xjf Lmod-8.1.tar.bz2
+  tar xjf Lmod-${lmod_v}.tar.bz2
 fi
-if [ ! -f ${flight_ENV_ROOT}/share/lmod/8.1/lmod/8.1/init/profile ]; then
-  cd Lmod-8.1
+if [ ! -f ${flight_ENV_ROOT}/share/lmod/${lmod_v}/lmod/${lmod_v}/init/profile ]; then
+  cd Lmod-${lmod_v}
   env_stage "Configuring prerequisite (lmod)"
-  ./configure --prefix=${flight_ENV_ROOT}/share/lmod/8.1 --with-fastTCLInterp=no
+  ./configure --prefix=${flight_ENV_ROOT}/share/lmod/${lmod_v} --with-fastTCLInterp=no
   env_stage "Installing prerequisite (lmod)"
   make install
   cd ..
 fi
 
 # Activate `module` command
-. ${flight_ENV_ROOT}/share/lmod/8.1/lmod/8.1/init/profile
+. ${flight_ENV_ROOT}/share/lmod/${lmod_v}/lmod/${lmod_v}/init/profile
 
 env_stage "Bootstrapping EasyBuild environment (easybuild@${name})"
 
