@@ -57,4 +57,5 @@ env_stage "Bootstrapping Spack environment (spack@${name})"
 if ! which python &>/dev/null; then
   sed -i -e 's,#!/usr/bin/env python$,#!/usr/bin/env python3,g' bin/spack
 fi
-bin/spack bootstrap
+bin/spack clean -m
+bin/spack spec zlib
