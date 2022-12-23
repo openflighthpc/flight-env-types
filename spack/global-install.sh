@@ -42,17 +42,18 @@ mkdir -p ${flight_ENV_CACHE} ${flight_ENV_BUILD_CACHE} ${flight_ENV_ROOT}
 cd ${flight_ENV_BUILD_CACHE}
 
 env_stage "Verifying prerequisites"
-if [ ! -f spack-v0.14.1.tar.gz ]; then
+if [ ! -f spack-v0.19.0.tar.gz ]; then
   env_stage "Fetching prerequisite (spack)"
-  wget https://github.com/spack/spack/archive/v0.14.1.tar.gz -O spack-v0.14.1.tar.gz
+  wget https://github.com/spack/spack/archive/v0.19.0.tar.gz -O spack-v0.19.0.tar.gz
 fi
 
 mkdir -p ${flight_ENV_ROOT}/spack+${name}
 env_stage "Extracting Spack hierarchy (spack@${name})"
-tar -C ${flight_ENV_ROOT}/spack+${name} -xzf spack-v0.14.1.tar.gz --strip-components=1
+tar -C ${flight_ENV_ROOT}/spack+${name} -xzf spack-v0.19.0.tar.gz --strip-components=1
 cd ${flight_ENV_ROOT}/spack+${name}
 env_stage "Bootstrapping Spack environment (spack@${name})"
 if ! which python &>/dev/null; then
   sed -i -e 's,#!/usr/bin/env python$,#!/usr/bin/env python3,g' bin/spack
 fi
-bin/spack bootstrap
+bin/spack clean -m
+bin/spack spec zlib
