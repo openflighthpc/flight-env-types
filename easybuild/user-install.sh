@@ -57,7 +57,7 @@ fi
 
 env_stage "Verifying prerequisites"
 
-if [[ "$distro" != "rhel8" && "$distro" != "rhel9" ]]; then
+if [[ "$distro" != "rhel8" ]]; then
   # Build LUA
   if [ ! -f lua-5.1.4.9.tar.bz2 ]; then
     env_stage "Fetching prerequisite (lua)"
