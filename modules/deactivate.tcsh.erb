@@ -30,7 +30,7 @@ foreach var (module_avail_opts module_clear_opts module_cmds module_config_opts 
   unset $var
 end
 
-foreach evar (LOADEDMODULES MODULEPATH MODULES_CMD MODULESHOME MODULES_USE_COMPAT_VERSION MODULEPATH_modshare)
+foreach evar (LOADEDMODULES MODULEPATH MODULES_CMD MODULESHOME MODULES_USE_COMPAT_VERSION MODULEPATH_modshare ENV BASH_ENV)
   unsetenv $evar
 end
 unset evar
