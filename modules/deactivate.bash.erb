@@ -26,7 +26,7 @@
 # ==============================================================================
 module purge
 
-flight_ENV_vars=(module LOADEDMODULES _module module _module_avail _module_comgen_words_and_files _module_long_arg_list _module_not_yet_loaded MODULEPATH_modshare MODULEPATH _module_raw _module_savelist MODULES_CMD MODULESHOME switchml)
+flight_ENV_vars=(module LOADEDMODULES _module module _module_avail _module_comgen_words_and_files _module_long_arg_list _module_not_yet_loaded MODULEPATH_modshare MODULEPATH _module_raw _module_savelist MODULES_CMD MODULESHOME switchml ENV BASH_ENV)
 for flight_ENV_iter in "${flight_ENV_vars[@]}"; do
   unset $flight_ENV_iter
 done
