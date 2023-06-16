@@ -56,9 +56,13 @@ if [ -f /etc/redhat-release ] && grep -q 'release 8' /etc/redhat-release; then
   distro=rhel8
 fi
 
+if [ -f /etc/redhat-release ] && grep -q 'release 9' /etc/redhat-release; then
+  distro=rhel9
+fi
+
 env_stage "Verifying prerequisites"
 
-if [ "$distro" != "rhel8" ]; then
+if [[ "$distro" != "rhel8" ]]; then
   # Build LUA
   if [ ! -f lua-${lua_v}.tar.bz2 ]; then
     env_stage "Fetching prerequisite (lua)"
