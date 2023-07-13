@@ -79,17 +79,17 @@ if [ ! -d "${flight_ENV_ROOT}"/share/modules/3.2.10 ]; then
   touch ${flight_ENV_ROOT}/share/modules/3.2.10/Modules/init/.modulespath
 fi
 
-if [ ! -d "${flight_ENV_ROOT}/share/gridware/1.5.5" ]; then
-  if [ ! -f gridware-legacy-1.5.5.tar.gz ]; then
+if [ ! -d "${flight_ENV_ROOT}/share/gridware/1.5.6" ]; then
+  if [ ! -f gridware-legacy-1.5.6.tar.gz ]; then
     env_stage "Fetching prerequisite (gridware)"
-    wget https://github.com/alces-flight/gridware-legacy/archive/stable.tar.gz -O gridware-legacy-1.5.5.tar.gz
+    wget https://github.com/alces-flight/gridware-legacy/archive/stable.tar.gz -O gridware-legacy-1.5.6.tar.gz
   fi
   env_stage "Extracting prerequisite (gridware)"
-  tar xvf gridware-legacy-1.5.5.tar.gz
+  tar xvf gridware-legacy-1.5.6.tar.gz
   env_stage "Installing prerequisite (gridware)"
-  mkdir -p "${flight_ENV_ROOT}/share/gridware/1.5.5"
-  cp -R gridware-legacy-stable/* "${flight_ENV_ROOT}/share/gridware/1.5.5"
-  cd ${flight_ENV_ROOT}/share/gridware/1.5.5
+  mkdir -p "${flight_ENV_ROOT}/share/gridware/1.5.6"
+  cp -R gridware-legacy-stable/* "${flight_ENV_ROOT}/share/gridware/1.5.6"
+  cd ${flight_ENV_ROOT}/share/gridware/1.5.6
   export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
   if [ -x ${flight_ROOT}/bin/flexec ]; then
     ${flight_ROOT}/bin/flexec bundle install --path=vendor --without=development --without=test --local
@@ -176,6 +176,8 @@ cat <<EOF > ${flight_ENV_ROOT}/gridware+${name}/etc/params.yml
 EOF
 if sudo -ln /bin/bash &>/dev/null; then
   cat <<EOF > ${flight_ENV_ROOT}/gridware+${name}/etc/whitelist.yml
+:packages: []
+:repos: []
 :users:
 - $(id -un)
 EOF
@@ -186,7 +188,7 @@ dname="local"
 cd ${flight_ENV_ROOT}/gridware+${name}
 ln -snf "${depot}" "${dname}"
 mkdir -p "${depot}/el7/pkg" "${depot}/el7/etc"
-cp -R ${flight_ENV_ROOT}/share/gridware/1.5.5/etc/depotskel/* "${depot}/el7/etc"
+cp -R ${flight_ENV_ROOT}/share/gridware/1.5.6/etc/depotskel/* "${depot}/el7/etc"
 
 if [ "${binary_enabled}" == "true" ]; then
    udepot="$(echo ${binary_placeholder}/$(uuid -v4 | cut -c1-6))"
@@ -203,8 +205,8 @@ else
   RUBY="$(which ruby &>/dev/null)"
 fi
 cat <<RUBY | "${RUBY}"
-ENV['BUNDLE_GEMFILE'] ||= "${flight_ENV_ROOT}/share/gridware/1.5.5/Gemfile"
-\$: << "${flight_ENV_ROOT}/share/gridware/1.5.5/lib"
+ENV['BUNDLE_GEMFILE'] ||= "${flight_ENV_ROOT}/share/gridware/1.5.6/Gemfile"
+\$: << "${flight_ENV_ROOT}/share/gridware/1.5.6/lib"
 
 require 'rubygems'
 require 'bundler'
