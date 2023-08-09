@@ -1,5 +1,5 @@
 # =============================================================================
-# Copyright (C) 2022-present Alces Flight Ltd.
+# Copyright (C) 2019-present Alces Flight Ltd.
 #
 # This file is part of Flight Environment.
 #
@@ -27,30 +27,23 @@
 export flight_ENV_orig_PATH="$PATH"
 export flight_ENV_orig_PS1="$PS1"
 
-export SINGULARITY_CACHEDIR=<%= env_root %>/singularity+<%= env_name %>/cache
-export SINGULARITY_PULLDIR=<%= env_root %>/singularity+<%= env_name %>/images
-export SINGULARITY_LOCALCACHEDIR=/tmp
+APPTAINER_VER=1.2.2
+PATH=<%= env_root %>/share/apptainer/${APPTAINER_VER}/bin:<%= env_root %>/share/squashfs/4.4/bin:$PATH
+export APPTAINER_CACHEDIR=<%= env_root %>/apptainer+<%= env_name %>/cache
 
-mkdir -p $SINGULARITY_CACHEDIR $SINGULARITY_PULLDIR
+mkdir -p $APPTAINER_CACHEDIR
 
-export flight_ENV_active=singularity@<%= env_name %>
+export flight_ENV_active=apptainer@<%= env_name %>
 export flight_ENV_scope=<%= env_global ? 'global' : 'user' %>
-export flight_ENV_dir=<%= env_root %>/singularity+<%= env_name %>
-
-if [ -f "${flight_ENV_dir}"/singularity.bash.rc ]; then
-   source "${flight_ENV_dir}"/singularity.bash.rc
-fi
-export flight_ENV_singularity_version=${flight_ENV_singularity_version:-3.2.1}
-
-PATH=<%= env_root %>/share/singularity/${flight_ENV_singularity_version}/bin:<%= env_root %>/share/squashfs/4.4/bin:$PATH
+export flight_ENV_dir=<%= env_root %>/apptainer+<%= env_name %>
 
 if [[ $TERM == "xterm-256color" ]]; then
-  PS1="\[\033[48;5;25;1;38;5;189m\]<singularity<%= env_name == 'default' ? '' : "@#{env_name}" %><%= env_global ? '\[\033[1;38;5;219m\]{+}\[\033[1;38;5;189m\]' : '' %>>\[\033[0m\] $PS1"
+  PS1="\[\033[48;5;25;1;38;5;189m\]<apptainer<%= env_name == 'default' ? '' : "@#{env_name}" %><%= env_global ? '\[\033[1;38;5;219m\]{+}\[\033[1;38;5;189m\]' : '' %>>\[\033[0m\] $PS1"
 else
-  PS1="\[\033[1m\]<singularity<%= env_name == 'default' ? '' : "@#{env_name}" %><%= env_global ? '\[\033[7m\]{+}\[\033[0;1m\]' : '' %>>\[\033[0m\] $PS1"
+  PS1="\[\033[1m\]<apptainer<%= env_name == 'default' ? '' : "@#{env_name}" %><%= env_global ? '\[\033[7m\]{+}\[\033[0;1m\]' : '' %>>\[\033[0m\] $PS1"
 fi
 
-if [ ! -u "<%= env_root %>/share/singularity/${flight_ENV_singularity_version}/libexec/singularity/bin/starter-suid" ]; then
+if [ ! -u "<%= env_root %>/share/apptainer/${APPTAINER_VER}/libexec/apptainer/bin/starter-suid" ]; then
   mun=$(sysctl -n user.max_user_namespaces)
   if [ "$mun" == "0" ]; then
     red=$(tput setaf 1)
@@ -62,13 +55,14 @@ ${red}${bold}==========
 ==========${reset}${bold}
 
 /proc/sys/user/max_user_namespaces is set to 0.  It must be set to a
-non-zero value to allow user-level access to Singularity container
+non-zero value to allow user-level access to Apptainer container
 instance execution.
 
-Please refer to '<%= Env::CLI::PROGRAM_NAME %> info singularity' for more details.
+Please refer to '<%= Env::CLI::PROGRAM_NAME %> info apptainer' for more details.
 ${reset}
 EOF
     unset red bold reset
   fi
   unset mun
 fi
+unset APPTAINER_VER

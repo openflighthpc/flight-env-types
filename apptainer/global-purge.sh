@@ -37,5 +37,5 @@ if [ -z "$name" ]; then
   exit 1
 fi
 
-env_stage "Deleting environment tree (singularity@${name})"
-rm -rf ${flight_ENV_ROOT}/singularity+${name}
+env_stage "Deleting environment tree (apptainer@${name})"
+rm -rf ${flight_ENV_ROOT}/apptainer+${name}

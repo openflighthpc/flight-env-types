@@ -1,6 +1,6 @@
-:name: singularity
+:name: apptainer
 :summary: |
   Container solution for scientific and application driven workloads.
-:url: https://www.sylabs.io/
+:url: https://apptainer.org/
 :arch:
   - x86_64

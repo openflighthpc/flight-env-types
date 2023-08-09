@@ -24,14 +24,13 @@
 # For more information on Flight Environment, please visit:
 # https://github.com/openflighthpc/flight-env
 # ==============================================================================
-flight_ENV_vars=(SINGULARITY_CACHEDIR SINGULARITY_PULLDIR SINGULARITY_LOCALCACHEDIR flight_ENV_singularity_version)
-for flight_ENV_iter in "${flight_ENV_vars[@]}"; do
-  unset $flight_ENV_iter
-done
-unset flight_ENV_iter flight_ENV_vars
+foreach evar (APPTAINER_CACHEDIR)
+  unsetenv $evar
+end
+unset evar
 
-unset flight_ENV_active flight_ENV_scope flight_ENV_dir
-PS1="${flight_ENV_orig_PS1}"
-unset flight_ENV_orig_PS1
-PATH="${flight_ENV_orig_PATH}"
+unsetenv flight_ENV_active flight_ENV_scope flight_ENV_dir
+set prompt="${flight_ENV_orig_prompt}"
+unset flight_ENV_orig_prompt
+setenv PATH "${flight_ENV_orig_PATH}"
 unset flight_ENV_orig_PATH

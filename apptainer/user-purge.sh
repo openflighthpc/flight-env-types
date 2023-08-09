@@ -1,3 +1,4 @@
+#!/bin/bash
 # =============================================================================
 # Copyright (C) 2019-present Alces Flight Ltd.
 #
@@ -24,13 +25,16 @@
 # For more information on Flight Environment, please visit:
 # https://github.com/openflighthpc/flight-env
 # ==============================================================================
-foreach evar (SINGULARITY_CACHEDIR SINGULARITY_PULLDIR SINGULARITY_LOCALCACHEDIR flight_ENV_singularity_version)
-  unsetenv $evar
-end
-unset evar
+set -e
 
-unsetenv flight_ENV_active flight_ENV_scope flight_ENV_dir
-set prompt="${flight_ENV_orig_prompt}"
-unset flight_ENV_orig_prompt
-setenv PATH "${flight_ENV_orig_PATH}"
-unset flight_ENV_orig_PATH
+flight_ENV_ROOT=${flight_ENV_ROOT:-$HOME/.local/share/flight/env}
+flight_ENV_CACHE=${flight_ENV_CACHE:-$HOME/.cache/flight/env}
+name=$1
+
+if [ -z "$name" ]; then
+  echo "error: environment name not supplied"
+  exit 1
+fi
+
+env_stage "Deleting environment tree (apptainer@${name})"
+rm -rf ${flight_ENV_ROOT}/apptainer+${name}

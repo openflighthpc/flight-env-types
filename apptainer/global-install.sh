@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Copyright (C) 2022-present Alces Flight Ltd.
+# Copyright (C) 2019-present Alces Flight Ltd.
 #
 # This file is part of Flight Environment.
 #
@@ -41,70 +41,55 @@ fi
 mkdir -p ${flight_ENV_CACHE} ${flight_ENV_BUILD_CACHE} ${flight_ENV_ROOT}
 cd ${flight_ENV_BUILD_CACHE}
 
-squash_v=4.4
-go_v=1.18.3
-v=3.10.0
+# XXX - verify that /proc/sys/user/max_user_namespaces is greater than 0
 
 env_stage "Verifying prerequisites"
-if [ ! -f squashfs${squash_v}.tar.gz ]; then
+SQUASHFS_VER=4.6.1
+GO_VER=1.20.7
+APPTAINER_VER=1.2.2
+if [ ! -f squashfs-${SQUASHFS_VER}.tar.gz ]; then
   env_stage "Fetching prerequisite (squashfs)"
-  wget https://sourceforge.net/projects/squashfs/files/squashfs/squashfs${squash_v}/squashfs${squash_v}.tar.gz
+  wget -O squashfs-${SQUASHFS_VER}.tar.gz https://github.com/plougher/squashfs-tools/archive/refs/tags/${SQUASHFS_VER}.tar.gz
   env_stage "Extracting prerequisite (squashfs)"
-  tar xzf squashfs${squash_v}.tar.gz
+  tar xzf squashfs-${SQUASHFS_VER}.tar.gz
   env_stage "Building prerequisite (squashfs)"
-  cd squashfs${squash_v}/squashfs-tools
+  cd squashfs-tools-${SQUASHFS_VER}/squashfs-tools
   make
   env_stage "Installing prerequisite (squashfs)"
-  mkdir -p ${flight_ENV_ROOT}/share/squashfs/${squash_v}/bin
-  mv mksquashfs unsquashfs ${flight_ENV_ROOT}/share/squashfs/${squash_v}/bin
+  mkdir -p ${flight_ENV_ROOT}/share/squashfs/${SQUASHFS_VER}/bin
+  mv mksquashfs unsquashfs ${flight_ENV_ROOT}/share/squashfs/${SQUASHFS_VER}/bin
   cd ../..
 fi
 
-if [ ! -f go${go_v}.linux-amd64.tar.gz ]; then
+if [ ! -f go${GO_VER}.linux-amd64.tar.gz ]; then
   env_stage "Fetching prerequisite (go)"
-  wget https://dl.google.com/go/go${go_v}.linux-amd64.tar.gz
+  wget https://go.dev/dl/go1.20.7.linux-amd64.tar.gz
   env_stage "Extracting prerequisite (go)"
-  mkdir go-${go_v}
-  cd go-${go_v}
-  tar xzf ../go${go_v}.linux-amd64.tar.gz
-  cd ..
+  tar xzf go${GO_VER}.linux-amd64.tar.gz
 fi
 
-if [ ! -f singularity-${v}.tar.gz ]; then
-  env_stage "Fetching prerequisite (singularity)"
-  wget https://github.com/sylabs/singularity/archive/v${v}.tar.gz -O singularity-${v}.tar.gz
-  export GOPATH=${flight_ENV_BUILD_CACHE}/go-${go_v}/go
+if [ ! -f apptainer-${APPTAINER_VER}.tar.gz ]; then
+  env_stage "Fetching prerequisite (apptainer)"
+  wget -O apptainer-${APPTAINER_VER}.tar.gz https://github.com/apptainer/apptainer/releases/download/v${APPTAINER_VER}/apptainer-${APPTAINER_VER}.tar.gz
+  export GOPATH=${flight_ENV_BUILD_CACHE}/go
   export PATH=${GOPATH}/bin:$PATH
-  mkdir -p $GOPATH/src/github.com/sylabs
-  cd $GOPATH/src/github.com/sylabs
-  env_stage "Extracting prerequisite (singularity)"
-  tar xzf ${flight_ENV_BUILD_CACHE}/singularity-${v}.tar.gz
-  mv singularity-${v} singularity
-  cd singularity
-  echo "${v}" >> VERSION
-  env_stage "Building prerequisite (singularity)"
+  env_stage "Extracting prerequisite (apptainer)"
+  tar xzf ${flight_ENV_BUILD_CACHE}/apptainer-${APPTAINER_VER}.tar.gz
+  mv apptainer-${APPTAINER_VER} apptainer
+  cd apptainer
+  env_stage "Building prerequisite (apptainer)"
   if [ "$UID" == "0" ]; then
-    ./mconfig --prefix=${flight_ENV_ROOT}/share/singularity/${v} \
-	--without-conmon \
-	--without-seccomp
+    ./mconfig --with-suid -b ./builddir --prefix=${flight_ENV_ROOT}/share/apptainer/${APPTAINER_VER}
   else
-    ./mconfig --without-suid --prefix=${flight_ENV_ROOT}/share/singularity/${v} \
-	--without-conmon \
-	--without-seccomp
+    ./mconfig --without-suid -b ./builddir --prefix=${flight_ENV_ROOT}/share/apptainer/${APPTAINER_VER}
   fi
   cd builddir
   make
-  env_stage "Installing prerequisite (singularity)"
+  env_stage "Installing prerequisite (apptainer)"
   make install
-  sed -e "s,# mksquashfs path =.*,mksquashfs path = ${flight_ENV_ROOT}/share/squashfs/${squash_v}/bin/mksquashfs,g" \
-      -i "${flight_ENV_ROOT}"/share/singularity/${v}/etc/singularity/singularity.conf
+  sed -e "s,# binary path =.*,binary path = ${flight_ENV_ROOT}/share/squashfs/${SQUASHFS_VER}/bin:\$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,g" \
+      -i "${flight_ENV_ROOT}"/share/apptainer/${APPTAINER_VER}/etc/apptainer/apptainer.conf
 fi
 
-env_stage "Creating environment (singularity@${name})"
-mkdir -p "${flight_ENV_ROOT}/singularity+${name}"
-cat <<EOF > "${flight_ENV_ROOT}/singularity+${name}"/singularity.bash.rc
-export flight_ENV_singularity_version=${v}
-EOF
-cat <<EOF > "${flight_ENV_ROOT}/singularity+${name}"/singularity.tcsh.rc
-setenv flight_ENV_singularity_version ${v}
-EOF
+env_stage "Creating environment (apptainer@${name})"
+mkdir -p "${flight_ENV_ROOT}/apptainer+${name}"

@@ -1,8 +1,8 @@
-# singularity(7) -- container solution for scientific and application driven workloads
+# apptainer(7) -- container solution for scientific and application driven workloads
 
 ## SYNOPSIS
 
-Singularity is an open-source container platform platform that has
+Apptainer is an open-source container platform platform that has
 been created to support high-performance computing (HPC) and research
 workloads. First released in 2016, the container solution was created
 by necessity for scientific and application driven workloads and aims
@@ -13,25 +13,25 @@ to support four primary functions:
   * User freedom.
   * Support existing traditional HPC environments.
 
-A user inside a Singularity container is the same user as outside the
-container. This is one of Singularity's defining characteristics,
+A user inside a Apptainer container is the same user as outside the
+container. This is one of Apptainer's defining characteristics,
 allowing a user (that may already have shell access to a particular
 host) to simply run a command inside of a container image as
 themselves.
 
-For more details, please refer to the comprehensive Singularity
-documentation at <https://www.sylabs.io/guides/3.10/user-guide/>.
+For more details, please refer to the comprehensive Apptainer
+documentation at <https://apptainer.org/docs>.
 
 ## ENVIRONMENT CREATION
 
-This environment provides Singularity v3.10.0. It is possible to create
-either user-level Singularity environments or, if you have write
+This environment provides Apptainer v3.2.1. It is possible to create
+either user-level Apptainer environments or, if you have write
 access to the global environment tree, to create system-wide
-Singularity environments.
+Apptainer environments.
 
 ### Personal Environment
 
-**NB. Personal Singularity environments have several restrictions and,
+**NB. Personal Apptainer environments have several restrictions and,
 as such, are experimental.** You may need to make requests to your
 system administrators to perform operations that require superuser
 access if your distribution does not contain support for [user
@@ -47,67 +47,67 @@ ERROR  : Failed to create user namespace
 ```
 
 To enable user namespace access (required to allow user-level access
-to execute singularity container instances), request that your system
+to execute apptainer container instances), request that your system
 administrator sets `/proc/sys/user/max_user_namespaces` to a
 (non-zero) value high enough to allow for the quantity of simultaneous
-Singularity containers that will be executed on the host. We recommend
+Apptainer containers that will be executed on the host. We recommend
 a value of `100`.
 
-A personal Singularity environment can be created using:
+A personal Apptainer environment can be created using:
 
 ```
-%PROGRAM_NAME% create singularity
+%PROGRAM_NAME% create apptainer
 # ...or to create an environment named 'myenv':
-%PROGRAM_NAME% create singularity@myenv
+%PROGRAM_NAME% create apptainer@myenv
 ```
 
-This will configure a Singularity installation and an, initially
+This will configure a Apptainer installation and an, initially
 empty, image cache environment.
 
 Once created, activate your environment using:
 
 ```
-%PROGRAM_NAME% activate singularity
+%PROGRAM_NAME% activate apptainer
 # ...or to activate the environment named 'myenv':
-%PROGRAM_NAME% create singularity@myenv
+%PROGRAM_NAME% create apptainer@myenv
 ```
 
-Use the `singularity` command to perform image management for your
+Use the `apptainer` command to perform image management for your
 environment:
 
 ```
-singularity --help
+apptainer --help
 ```
 
 To see what images are cached within your environment use the
-`singularity cache list` command; to execute a prebuilt image use
-`singularity run application.img`; to run a shell within an image use
-`singularity shell ...` and to build images use `singularity build
+`apptainer cache list` command; to execute a prebuilt image use
+`apptainer run application.img`; to run a shell within an image use
+`apptainer shell ...` and to build images use `apptainer build
 ...`.
 
-Refer to the [Singularity user
-guide](https://sylabs.io/guides/3.10/user-guide/) for more details.
+Refer to the [Apptainer user
+guide](https://apptainer.org/docs/user/latest) for more details.
 
 ### Global Environment
 
 If you have write access to the global environment tree, a shared
-Singularity environment can be created using:
+Apptainer environment can be created using:
 
 ```
-%PROGRAM_NAME% create --global singularity
+%PROGRAM_NAME% create --global apptainer
 # ...or to create a environment named 'global':
-%PROGRAM_NAME% create --global singularity@global
+%PROGRAM_NAME% create --global apptainer@global
 ```
 
-This will configure a Singularity installation and an, initially
+This will configure a Apptainer installation and an, initially
 empty, image cache environment.
 
 Once created, the environment can be activated by any user using:
 
 ```
-%PROGRAM_NAME% activate singularity
+%PROGRAM_NAME% activate apptainer
 # ...or to activate the environment named 'global':
-%PROGRAM_NAME% activate singularity@global
+%PROGRAM_NAME% activate apptainer@global
 ```
 
 Note that only users who have write access to the global environment
@@ -115,24 +115,24 @@ tree are able to download upstream images to a shared environment.
 
 If the environment was created by the superuser (root), then any user
 may execute a cached or direct image, or run a shell within a cached or
-direct image by using the `singularity` command provided by the shared
+direct image by using the `apptainer` command provided by the shared
 environment.
 
-Use the `singularity` command to perform image management for your
+Use the `apptainer` command to perform image management for your
 environment:
 
 ```
-singularity --help
+apptainer --help
 ```
 
 To see what images are cached within your environment use the
-`singularity cache list` command; to execute a prebuilt image use
-`singularity run application.img`; to run a shell within an image use
-`singularity shell ...` and to build images use `singularity build
+`apptainer cache list` command; to execute a prebuilt image use
+`apptainer run application.img`; to run a shell within an image use
+`apptainer shell ...` and to build images use `apptainer build
 ...`.
 
-Refer to the [Singularity user
-guide](https://sylabs.io/guides/3.10/user-guide/) for more details.
+Refer to the [Apptainer user
+guide](https://apptainer.org/docs/user/latest) for more details.
 
 ## LICENSE
 
@@ -144,4 +144,4 @@ information.
 
 ## COPYRIGHT
 
-Copyright (C) 2022-Present Alces Flight Ltd.
+Copyright (C) 2019-Present Alces Flight Ltd.
