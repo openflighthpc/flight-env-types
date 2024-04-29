@@ -43,3 +43,5 @@ if ( -f "<%= env_root %>/conda+<%= env_name %>/etc/profile.d/conda.csh" ) then
 else
     setenv PATH="<%= env_root %>/conda+<%= env_name %>/bin:$PATH"
 endif
+
+setenv PIP_ISOLATED true
